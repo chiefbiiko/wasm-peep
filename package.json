@@ -1,0 +1,29 @@
+{
+  "name": "wasm-peep",
+  "version": "0.0.0",
+  "description": "bike shed debugging of wasm",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chiefbiiko/wasm-peep.git"
+  },
+  "keywords": [
+    "wasm",
+    "debugging",
+    "peep",
+    "breakpoint",
+    "debug"
+  ],
+  "author": "Noah Anabiik Schwarz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chiefbiiko/wasm-peep/issues"
+  },
+  "homepage": "https://github.com/chiefbiiko/wasm-peep#readme",
+  "dependencies": {
+    "tape-puppet": "^0.1.5"
+  }
+}
