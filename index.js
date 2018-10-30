@@ -1,10 +1,5 @@
-
-
-function peepWebAssembly (wasm_buf) {
+module.exports = function packWebAssembly (wasm_buf) {
   var base64_wasm = wasm_buf.toString('base64')
-  // pack all funcs from above into this iife string, then, in there...
-  // call loadWebAssembly, save the module instance
-  // on btn click execute code from a textarea with module instance
   return `
     function toUint8Array (s) {
       if (typeof atob === 'function') return new Uint8Array(atob(s).split('').map(charCode))
@@ -40,18 +35,19 @@ function peepWebAssembly (wasm_buf) {
 
     loadWebAssembly(${base64_wasm})
       .then(function (mod) {
+        var info = document.createElement('p')
         var ta = document.createElement('textarea')
         var btn = document.createElement('button')
-        ta.value = 'replace this with a function that has following signature\n' +
-          'function (module) // with module.exports.exported_func'
-        btn.innerText = 'click this button to run yo wasm'
+        info.innerText = 'set breakpoints in yo wasm then run it by calling its exports in the textarea\'s function definition and clicking "run"'
+        ta.value = 'replace this with a function definition that has this signature:\nfunction (module) // with module.exports.exported_func'
+        btn.innerText = 'run'
         btn.onclick = function () {
-          new Function('return ' + ta.innerText)().call(null, mod)
+          new Function('return ' + ta.innerText)()(mod)
         }
+        document.body.appendChild(info)
         document.body.appendChild(ta)
         document.body.appendChild(btn)
       })
       .catch(console.error)
     `.replace(/^ {4}/gm, '')
-
 }
