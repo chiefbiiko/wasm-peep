@@ -9,6 +9,7 @@ var wasm_buf = require('fs').readFileSync(process.argv[2])
 
 var js = packWebAssembly(wasm_buf)
 
-tapePuppetStream({ devtools: true }).end(js)
+// tapePuppetStream({ devtools: true }).end(js)
+tapePuppetStream({ devtools: true }).end('alert("fraud")')
 
 // incorporate cli conventions

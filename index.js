@@ -1,5 +1,6 @@
 module.exports = function packWebAssembly (wasm_buf) {
   var base64_wasm = wasm_buf.toString('base64')
+  // BUG: TypeError: Failed to execute 'compile' on 'WebAssembly': Incorrect response MIME type. Expected 'application/wasm'.
   return `
     function toUint8Array (s) {
       if (typeof atob === 'function') return new Uint8Array(atob(s).split('').map(charCode))
@@ -23,7 +24,7 @@ module.exports = function packWebAssembly (wasm_buf) {
           mod.exports.memory.grow(Math.max(0, Math.ceil(Math.abs(size - mod.memory.length) / 65536)))
           mod.memory = new Uint8Array(mod.exports.memory.buffer)
         }
-        WebAssembly.instantiateStreaming(new Response(wasm), imp)
+        WebAssembly.instantiateStreaming(new Response(wasm, { 'Content-Type': 'application/wasm' }), imp)
           .then(function (w) {
             mod.exports = w.instance.exports
             mod.memory = mod.exports.memory && mod.exports.memory.buffer && new Uint8Array(mod.exports.memory.buffer)
