@@ -1,10 +1,10 @@
 module.exports = function packWebAssembly (wasm_buf) {
   var base64_wasm = wasm_buf.toString('base64')
+  // BUG: chromium dies during startup
   return `
     window.onload = function () {
       function toUint8Array (s) {
-        if (typeof atob === 'function') return new Uint8Array(atob(s).split('').map(charCode))
-        return Buffer.from(s, 'base64')
+        return new Uint8Array(atob(s).split('').map(charCode))
       }
 
       function charCode (c) {
@@ -34,7 +34,7 @@ module.exports = function packWebAssembly (wasm_buf) {
         })
       }
 
-      loadWebAssembly(${base64_wasm})
+      loadWebAssembly('${base64_wasm}')
         .then(function (mod) {
           var info = document.createElement('p')
           var ta = document.createElement('textarea')
