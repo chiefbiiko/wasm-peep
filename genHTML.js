@@ -55,9 +55,15 @@ module.exports = function genHTML (port = 41900) {
             btn.innerText = 'run'
             btn.style.display = 'block'
             btn.onclick = function () {
-              // BUG: throws something
-              //new Function('return ' + ta.innerText)()(mod)
-              var func = eval('(' + ta.innerText + ')')
+              var func
+              try {
+                func = eval('(' + ta.value + ')')
+              } catch (err) {
+                console.error(err)
+                return alert('invalid function definition')
+              }
+              if (typeof func !== 'function')
+                return alert('invalid function definition')
               func(mod)
             }
             document.body.appendChild(ol)
