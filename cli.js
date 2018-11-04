@@ -1,21 +1,40 @@
+#!/usr/bin/env node
+
 // wasm-peep file.wasm [importObject]
 
-var packWebAssembly = require('./index.js')
-var tapePuppetStream = require('tape-puppet')
+var { createReadStream } = require('fs')
+var { createServer } = require('http')
+var pump = require('pump')
+var minimist = require('minimist')
 
-var wasm_buf = require('fs').readFileSync(process.argv[2])
+// TODO: allow passing imports from a js file
+var argv = minimist(process.argv.slice(2), {
+  alias: {
+    help: 'h',
+    version: 'v',
+    wasm: 'w',
+    port: 'p'
+  }
+})
 
-// TODO: check magic number for wasm
+var wasm_file = argv.wasm
+var html_file = './index.html'
+var port = argv.port || 41900
 
-// TODO: serve wasm from a localhost server that sets content-type to application/wasm
+var server = createServer(function (req, res) {
+  if (req.url.endsWith('wasm')) {
+    res.writeHead(200, {
+      'Access-Control-Allow-Origin': 'localhost',
+      'Content-Type': 'application/wasm'
+    })
+    pump(createReadStream(wasm_file), res)
+  } else {
+    res.writeHead(200, { 'Content-Type': 'text/html' })
+    pump(createReadStream(html_file), res)
+  }
+})
 
-// TODO: refactor, dont pass wasm_buf, it will be fetched, rename to genClientCode
-var js = packWebAssembly(wasm_buf)
-
-tapePuppetStream({ devtools: true })
-  .on('data', function (chunk) {
-    console.log(chunk.toString())
-  })
-  .end(js)
-
-// TODO: allow passing imports, incorporate cli conventions
+server.listen(port, function () {
+  console.log(`wasm-peep server live @ localhost:${port}`)
+  // TODO: open firefox with devtools opened
+})

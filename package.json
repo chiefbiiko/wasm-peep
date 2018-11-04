@@ -2,7 +2,11 @@
   "name": "wasm-peep",
   "version": "0.0.0",
   "description": "bike shed debugging of wasm",
-  "main": "index.js",
+  "main": null,
+  "bin": {
+    "wasm-peep": "./cli.js",
+    "wasmp": "./cli.js"
+  },
   "scripts": {
     "test": "tape test.js"
   },
@@ -24,6 +28,7 @@
   },
   "homepage": "https://github.com/chiefbiiko/wasm-peep#readme",
   "dependencies": {
-    "tape-puppet": "^0.1.5"
+    "minimist": "^1.2.0",
+    "pump": "^3.0.0"
   }
 }
