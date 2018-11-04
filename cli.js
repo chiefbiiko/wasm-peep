@@ -1,40 +1,82 @@
 #!/usr/bin/env node
 
-// wasm-peep file.wasm [importObject]
-
-var { createReadStream } = require('fs')
+var { createReadStream, openSync, readSync, readFileSync } = require('fs')
 var { createServer } = require('http')
+var { execSync } = require('child_process')
 var pump = require('pump')
 var minimist = require('minimist')
 
-// TODO: allow passing imports from a js file
+function stringify (pojo) {
+  return JSON.stringify(
+    Object.keys(pojo)
+      .reduce(function (acc, cur) {
+        var val = pojo[cur]
+        acc[cur] = typeof val === 'function' ? val.toString() : val
+        return acc
+      }, {})
+  )
+}
+
 var argv = minimist(process.argv.slice(2), {
   alias: {
     help: 'h',
-    version: 'v',
-    wasm: 'w',
-    port: 'p'
+    version: 'v'
   }
 })
 
-var wasm_file = argv.wasm
-var html_file = './index.html'
+var version = require('./package.json').version
+if (argv.version) return console.log(version)
+if (argv.help) return console.log(`
+  wasm-peep v${version}
+
+    bikeshed debugging for wasm
+
+  Usage:
+
+    wasm-peep|wasmpeep|wasmp [--options] file.wasm
+
+  Options:
+
+    -h, --help            print usage instructions
+    -v, --version         print version
+        --wasm            WebAssembly module filepath
+        --port            server port, default: 41900
+        --imports         path to a CommonJS module exporting an import object
+
+  Examples:
+
+    wasmpeep ./module.wasm
+    wasmpeep --wasm ./module.wasm
+`.replace(/^ {2}/gm, ''))
+
 var port = argv.port || 41900
+var wasm_file = argv.wasm || argv._[0]
+var html = readFileSync('./index.html', 'utf8').replace(/41900/, port)
+var imports = argv.imports ? stringify(require(argv.imports)) : '{}'
+
+var numba = Buffer.alloc(4)
+var magic = Buffer.from([ 0x00, 0x61, 0x73, 0x6d ])
+readSync(openSync(wasm_file, 'r'), numba, 0, 4, 0)
+if (!numba.equals(magic)) throw Error('not wasm')
 
 var server = createServer(function (req, res) {
   if (req.url.endsWith('wasm')) {
-    res.writeHead(200, {
-      'Access-Control-Allow-Origin': 'localhost',
-      'Content-Type': 'application/wasm'
-    })
+    res.writeHead(200, { 'Content-Type': 'application/wasm' })
     pump(createReadStream(wasm_file), res)
+  } else if (req.url.endsWith('imports')) {
+    res.writeHead(200, { 'Content-Type': 'application/json' })
+    res.end(imports)
   } else {
     res.writeHead(200, { 'Content-Type': 'text/html' })
-    pump(createReadStream(html_file), res)
+    res.end(html)
   }
 })
 
 server.listen(port, function () {
   console.log(`wasm-peep server live @ localhost:${port}`)
-  // TODO: open firefox with devtools opened
+  if (process.platform === 'win32') {
+    execSync(`start firefox -devtools -url "http://localhost:${port}"`)
+  } else {
+    execSync(`open -a firefox -devtools -url "http://localhost:${port}"`)
+  }
 })

@@ -1,10 +1,11 @@
 {
   "name": "wasm-peep",
   "version": "0.0.0",
-  "description": "bike shed debugging of wasm",
+  "description": "bike shed debugging for wasm",
   "main": null,
   "bin": {
     "wasm-peep": "./cli.js",
+    "wasmpeep": "./cli.js",
     "wasmp": "./cli.js"
   },
   "scripts": {
