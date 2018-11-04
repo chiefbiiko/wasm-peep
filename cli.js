@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
-var { createReadStream, openSync, readSync, readFileSync } = require('fs')
+var { createReadStream, openSync, readSync } = require('fs')
 var { createServer } = require('http')
 var { execSync } = require('child_process')
 var pump = require('pump')
 var minimist = require('minimist')
+var genHTML = require('./genHTML.js')
 
 function stringify (pojo) {
   return JSON.stringify(
@@ -51,7 +52,7 @@ if (argv.help) return console.log(`
 
 var port = argv.port || 41900
 var wasm_file = argv.wasm || argv._[0]
-var html = readFileSync('./index.html', 'utf8').replace(/41900/, port)
+var html = genHTML(port)
 var imports = argv.imports ? stringify(require(argv.imports)) : '{}'
 
 var numba = Buffer.alloc(4)
