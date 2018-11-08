@@ -76,8 +76,8 @@ var server = createServer(function (req, res) {
 server.listen(port, function () {
   console.log(`wasm-peep server live @ localhost:${port}`)
   if (process.platform === 'win32') {
-    execSync(`start firefox -devtools -url "http://localhost:${port}"`)
+    execSync(`start firefox -devtools -url http://localhost:${port}`)
   } else {
-    execSync(`open -a firefox -devtools -url "http://localhost:${port}"`)
+    execSync(`open -a firefox "-devtools -url http://localhost:${port}"`)
   }
 })
