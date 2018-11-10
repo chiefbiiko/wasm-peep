@@ -78,7 +78,7 @@ server.listen(port, function () {
   if (process.platform === 'win32') {
     execSync(`start firefox -devtools -url http://localhost:${port}`)
   } else if (process.platform === 'darwin') {
-    execSync(`/Applications/Firefox.app/Conents/MacOS/firefox --devtools --url http://localhost:${port}`)
+    execSync(`/Applications/Firefox.app/Contents/MacOS/firefox --devtools --url http://localhost:${port}`)
   } else {
     execSync(`open -a firefox --devtools --url http://localhost:${port}`)
   }
