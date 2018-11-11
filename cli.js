@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
-var { createReadStream, openSync, readSync } = require('fs')
+var { readFile, watch } = require('fs')
 var { createServer } = require('http')
 var { execSync } = require('child_process')
-var pump = require('pump')
 var minimist = require('minimist')
 var genHTML = require('./genHTML.js')
 
@@ -55,15 +54,25 @@ var wasm_file = argv.wasm || argv._[0]
 var html = genHTML(port)
 var imports = argv.imports ? stringify(require(argv.imports)) : '{}'
 
-var numba = Buffer.alloc(4)
+var wasm_buf
 var magic = Buffer.from([ 0x00, 0x61, 0x73, 0x6d ])
-readSync(openSync(wasm_file, 'r'), numba, 0, 4, 0)
-if (!numba.equals(magic)) throw Error('not wasm')
+
+function stashWasm () {
+  readFile(wasm_file, function (err, buf) {
+    if (err) throw err
+    if (!buf.slice(0, 4).equals(magic)) throw Error('not wasm')
+    console.log('updatin to the latest state of yo wasm')
+    wasm_buf = buf
+  })
+}
+
+stashWasm()
+var watcher = watch(wasm_file, { persistent: false }, stashWasm)
 
 var server = createServer(function (req, res) {
   if (req.url.endsWith('wasm')) {
     res.writeHead(200, { 'Content-Type': 'application/wasm' })
-    pump(createReadStream(wasm_file), res)
+    res.end(wasm_buf)
   } else if (req.url.endsWith('imports')) {
     res.writeHead(200, { 'Content-Type': 'application/json' })
     res.end(imports)
@@ -82,4 +91,9 @@ server.listen(port, function () {
   } else {
     execSync(`open -a firefox --devtools --url http://localhost:${port}`)
   }
+})
+
+process.on('exit', function () {
+  watcher.close()
+  server.close()
 })

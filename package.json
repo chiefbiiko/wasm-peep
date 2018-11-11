@@ -1,6 +1,6 @@
 {
   "name": "wasm-peep",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "bikeshed debugging for wasm",
   "main": null,
   "bin": {
@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/chiefbiiko/wasm-peep#readme",
   "dependencies": {
-    "minimist": "^1.2.0",
-    "pump": "^3.0.0"
-  }
+    "minimist": "^1.2.0"
+  },
+  "devDependencies": {}
 }
