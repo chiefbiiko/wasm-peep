@@ -4,7 +4,7 @@
 
 ***
 
-Bikeshed debugging of buggy WebAssembly modules using Firefox devtools.
+Bikeshed debugging of WebAssembly modules using Firefox devtools straight outta `node`.
 
 ***
 
@@ -14,7 +14,11 @@ npm install --global wasm-peep
 
 ***
 
-## CLI
+## Usage
+
+```
+wasm-peep|wasmpeep|wasmp [--options] file.wasm
+```
 
 The command line program is available as `wasm-peep`, `wasmpeep`, and `wasmp`.
 
@@ -43,13 +47,7 @@ Examples:
   wasmp --watch ./module.wasm
 ```
 
-***
-
-## API
-
-### `wasm-peep`
-
-wasm-peep
+When `--watch`in, the server watches the WebAssembly module and imports file for changes and updates its response payloads accordingly.
 
 ***
 
