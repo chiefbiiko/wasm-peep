@@ -67,6 +67,7 @@ function stashWasm () {
 }
 
 function stashImports () {
+  console.log('updatin imports')
   imports = argv.imports ? stringify(require(argv.imports)) : '{}'
 }
 
