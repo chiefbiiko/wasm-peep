@@ -12,27 +12,19 @@ Bikeshed debugging of WebAssembly modules using Firefox devtools straight outta 
 npm install --global wasm-peep
 ```
 
+The command line program is available as `wasm-peep`, `wasmpeep`, and `wasmp`.
+
 ***
 
-## Usage
+## CLI Usage
 
 ```
 wasm-peep|wasmpeep|wasmp [--options] file.wasm
 ```
 
-The command line program is available as `wasm-peep`, `wasmpeep`, and `wasmp`.
-
-`wasmp -h`:
+### Options
 
 ```
-wasm-peep v0.2.0
-
-  bikeshed debugging for wasm
-
-Usage:
-
-  wasm-peep|wasmpeep|wasmp [--options] file.wasm
-
 Options:
 
   -h, --help            print usage instructions
@@ -40,11 +32,6 @@ Options:
       --watch           update wasm and imports on change? default: false
       --port            server port, default: 41900
       --imports         path to a CommonJS module exporting an import object
-
-Examples:
-
-  wasmpeep ./module.wasm
-  wasmp --watch ./module.wasm
 ```
 
 When `--watch`in, the server watches the WebAssembly module and imports file for changes and updates its response payloads accordingly.
