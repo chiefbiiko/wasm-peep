@@ -9,7 +9,7 @@ Bikeshed debugging of WebAssembly modules using Firefox devtools straight outta 
 ***
 
 ```
-npm install --global wasm-peep
+npm install --global chiefbiiko/wasm-peep
 ```
 
 The command line program is available as `wasm-peep`, `wasmpeep`, and `wasmp`.
