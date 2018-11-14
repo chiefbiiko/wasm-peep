@@ -1,6 +1,6 @@
 {
   "name": "wasm-peep",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "bikeshed debugging for wasm",
   "main": null,
   "bin": {
@@ -8,7 +8,9 @@
     "wasmpeep": "./cli.js",
     "wasmp": "./cli.js"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "tape ./test.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chiefbiiko/wasm-peep.git"
@@ -29,5 +31,7 @@
   "dependencies": {
     "minimist": "^1.2.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "tape": "^4.9.1"
+  }
 }

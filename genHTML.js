@@ -1,6 +1,6 @@
 module.exports = function genHTML (port = 41900) {
   return `
-    <!doctype>
+    <!doctype html>
     <html>
     <head>
       <meta charset="UTF-8">
@@ -8,13 +8,6 @@ module.exports = function genHTML (port = 41900) {
         main()
         async function main () {
           renderUi(await loadWebAssembly('http://localhost:${port}'))
-          function reassembleImports (impo_raw) {
-            return Object.keys(impo_raw)
-              .reduce(function (acc, cur) {
-                acc[cur] = eval('(' + impo_raw[cur] + ')')
-                return acc
-              }, {})
-          }
           async function loadWebAssembly (url) {
             var impo_res = await fetch(url + '/imports')
             var impo_raw = await impo_res.json()
@@ -28,13 +21,20 @@ module.exports = function genHTML (port = 41900) {
               exports: null,
               realloc: realloc
             }
+            mod.exports = wasm.instance.exports
+            mod.memory = mod.exports.memory && mod.exports.memory.buffer && new Uint8Array(mod.exports.memory.buffer)
+            return mod
             function realloc (size) {
               mod.exports.memory.grow(Math.max(0, Math.ceil(Math.abs(size - mod.memory.length) / 65536)))
               mod.memory = new Uint8Array(mod.exports.memory.buffer)
             }
-            mod.exports = wasm.instance.exports
-            mod.memory = mod.exports.memory && mod.exports.memory.buffer && new Uint8Array(mod.exports.memory.buffer)
-            return mod
+            function reassembleImports (impo_raw) {
+              return Object.keys(impo_raw)
+                .reduce(function (acc, cur) {
+                  acc[cur] = eval('(' + impo_raw[cur] + ')')
+                  return acc
+                }, {})
+            }
           }
           function renderUi (mod) {
             var ol = document.createElement('ol')
@@ -75,5 +75,5 @@ module.exports = function genHTML (port = 41900) {
     </head>
     <body></body>
     </html>
-    `.replace(/^ {4}/gm, '')
+    `.replace(/^ {4}/gm, '').trim()
 }
