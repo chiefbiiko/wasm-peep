@@ -2,7 +2,13 @@ var tape = require('tape')
 var { spawn, execSync } = require('child_process')
 var { get } = require('http')
 
-var got = function (url, cb) {
+function sleep (ms) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, ms)
+  })
+}
+
+function got (url, cb) {
   get(url, function (res) {
     var chunks = []
     res.on('data', function (chunk) {
@@ -22,14 +28,16 @@ function reassembleImports (impo_raw) {
     }, {})
 }
 
-tape('grand test', function (t) {
+tape('grand test', async function (t) {
   argv =  [
     './cli.js',
     '--imports',
     './example/imports.js',
-    './example/example.wasm' 
+    './example/example.wasm'
   ]
   var child = spawn('node', argv, { stdio: 'inherit' })
+  // when spawning on unix, execution resumes too fast, server not live yet
+  if (process.platform !== 'win32') sleep(1000)
   child.on('error', t.end)
   got('http://localhost:41900/wasm', function (err, data) {
     if (err) t.end(err)
