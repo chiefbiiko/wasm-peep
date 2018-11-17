@@ -1,6 +1,6 @@
 {
   "name": "wasm-peep",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "bikeshed debugging for wasm",
   "main": null,
   "bin": {

@@ -51,7 +51,7 @@ module.exports = function genHTML (port = 41900) {
             li3.innerText = 'click run'
             ta.placeholder = 'fill this with a function definition that has this signature: function (module) // with module.exports.exported_func'
             ta.style.width = '100%'
-            ta.style.height = '100px'
+            ta.style.height = '500px'
             btn.innerText = 'run'
             btn.style.display = 'block'
             btn.onclick = function () {
