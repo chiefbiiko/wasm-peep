@@ -4,6 +4,7 @@ module.exports = function genHTML (port = 41900) {
     <html>
     <head>
       <meta charset="UTF-8">
+      <script src="https://unpkg.com/codeflask/build/codeflask.min.js"></script>
       <script>
         main()
         async function main () {
@@ -41,23 +42,23 @@ module.exports = function genHTML (port = 41900) {
             var li1 = document.createElement('li')
             var li2 = document.createElement('li')
             var li3 = document.createElement('li')
-            var ta = document.createElement('textarea')
+            var div = document.createElement('div')
+            var flask
             var btn = document.createElement('button')
             ol.appendChild(li1)
             ol.appendChild(li2)
             ol.appendChild(li3)
-            li1.innerText = 'set breakpoints in yo wasm'
-            li2.innerText = 'define a function in the textarea below'
+            li1.innerText = 'set breakpoints in yo wasm using Firefox devtools'
+            li2.innerHTML = 'define a function with signature <code>function (module)</code> n call yo module\\'s exports in dat func'
             li3.innerText = 'click run'
-            ta.placeholder = 'fill this with a function definition that has this signature: function (module) // with module.exports.exported_func'
-            ta.style.width = '100%'
-            ta.style.height = '500px'
+            div.id = 'editor'
+            div.innerText = 'function (module) {}'
             btn.innerText = 'run'
             btn.style.display = 'block'
             btn.onclick = function () {
               var func
               try {
-                func = eval('(' + ta.value + ')')
+                func = eval('(' + flask.getCode() + ')')
               } catch (err) {
                 console.error(err)
                 return alert('invalid function definition')
@@ -67,8 +68,12 @@ module.exports = function genHTML (port = 41900) {
               func(mod)
             }
             document.body.appendChild(ol)
-            document.body.appendChild(ta)
+            document.body.appendChild(div)
             document.body.appendChild(btn)
+            flask = new CodeFlask('#editor', {
+              language: 'js',
+              lineNumbers: true
+            })
           }
         }
       </script>
